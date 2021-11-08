@@ -41,7 +41,7 @@ impl<'a, T> Insertion<'a, T> {
         Insertion { start, data }
     }
 
-    /// Convinience method that constructs an owned version of `self`.
+    /// Convenience method that constructs an owned version of `self`.
     ///
     /// [`Insertion`]: Insertion
     pub fn to_owned(&self) -> OwnedInsertion<T>
@@ -80,7 +80,7 @@ impl<T> OwnedInsertion<T> {
         OwnedInsertion { start, data }
     }
 
-    /// Convinience method that constructs a borrowed version of `self`.
+    /// Convenience method that constructs a borrowed version of `self`.
     ///
     /// [`Insertion`]: Insertion
     /// [`patch`]: Patch::patch
@@ -95,10 +95,13 @@ impl<T: Clone> From<&Insertion<'_, T>> for OwnedInsertion<T> {
     }
 }
 
-/// Description of the difference between two slices. This is the return type of
-/// [`diff`] method.
+/// Description of the difference between two slices.
+///
+/// This `struct` is the return type of [`diff`] method and can be used in
+/// [`patch`] method as well.
 ///
 /// [`diff`]: Diff::diff
+/// [`patch`]: Patch::patch
 #[derive(Debug, PartialEq, Eq)]
 pub struct Difference<'a, T> {
     /// All operations of deletions from a slice.
@@ -116,11 +119,9 @@ impl<'a, T> Difference<'a, T> {
         Difference { deletions: Vec::new(), insertions: Vec::new() }
     }
 
-    /// Contructs a new [`Difference`] from [`Vec`]s of [`Deletion`]s and
-    /// [`Insertion`]s.
+    /// Contructs a new [`Difference`] from [`Deletion`]s and [`Insertion`]s.
     ///
     /// [`Difference`]: Difference
-    /// [`Vec`]: Vec
     /// [`Deletion`]: Deletion
     /// [`Insertion`]: Insertion
     pub fn new(
@@ -130,7 +131,7 @@ impl<'a, T> Difference<'a, T> {
         Difference { deletions, insertions }
     }
 
-    /// Convention method for constructing [`Difference`] from [`Deletion`]s.
+    /// Convenience that constructs [`Difference`] from [`Deletion`]s only.
     ///
     /// [`Difference`]: Difference
     /// [`Deletion`]: Deletion
@@ -138,7 +139,7 @@ impl<'a, T> Difference<'a, T> {
         deletions.into()
     }
 
-    /// Convention method for constructing [`Difference`] from [`Insertion`]s.
+    /// Convenience that constructs [`Difference`] from [`Insertion`]s only.
     ///
     /// [`Difference`]: Difference
     /// [`Insertion`]: Insertion
@@ -146,7 +147,7 @@ impl<'a, T> Difference<'a, T> {
         insertions.into()
     }
 
-    /// Convinience method that constructs an owned version of `self`.
+    /// Convenience method that constructs an owned version of `self`.
     pub fn to_owned(&self) -> OwnedDifference<T>
     where
         T: Clone,
@@ -198,11 +199,10 @@ impl<T> OwnedDifference<T> {
         OwnedDifference::new(Vec::new(), Vec::new())
     }
 
-    /// Constructs a new [`OwnedDifference`] from [`Vec`]s of [`Deletion`]s and
+    /// Constructs a new [`OwnedDifference`] from [`Deletion`]s and
     /// [`OwnedInsertion`]s.
     ///
     /// [`OwnedDifference`]: OwnedDifference
-    /// [`Vec`]: Vec
     /// [`Deletion`]: Deletion
     /// [`OwnedInsertion`]: OwnedInsertion
     pub fn new(
@@ -212,7 +212,7 @@ impl<T> OwnedDifference<T> {
         OwnedDifference { deletions, insertions }
     }
 
-    /// Convinience method that constructs a new [`OwnedDifference`] from
+    /// Convenience method that constructs a new [`OwnedDifference`] from
     /// [`Deletion`]s only.
     /// 
     /// [`OwnedDifference`]: OwnedDifference
@@ -221,7 +221,7 @@ impl<T> OwnedDifference<T> {
         deletions.into()
     }
 
-    /// Convinience method that constructs a new [`OwnedDifference`] from
+    /// Convenience method that constructs a new [`OwnedDifference`] from
     /// [`OwnedInsertion`]s only.
     /// 
     /// [`OwnedDifference`]: OwnedDifference
@@ -230,7 +230,7 @@ impl<T> OwnedDifference<T> {
         insertions.into()
     }
 
-    /// Convinience method that constructs a borrowed version of `self`.
+    /// Convenience method that constructs a borrowed version of `self`.
     pub fn borrow(&self) -> Difference<T> {
         self.into()
     }
@@ -378,7 +378,7 @@ impl<T: Eq + Clone> Patch<T> for Vec<T> {
     }
 }
 
-/// Convience trait that contains a method for constructing new data with
+/// Convenience trait that contains a method for constructing new data with
 /// changes from previously obtained [`Difference`] applied.
 ///
 /// [`Difference`]: Difference

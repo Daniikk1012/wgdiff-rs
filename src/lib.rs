@@ -40,6 +40,59 @@ impl<'a, T> Insertion<'a, T> {
     pub fn new(start: usize, data: &'a [T]) -> Self {
         Insertion { start, data }
     }
+
+    /// Convinience method that constructs an owned version of `self`.
+    ///
+    /// [`Insertion`]: Insertion
+    pub fn to_owned(&self) -> OwnedInsertion<T>
+    where
+        T: Clone,
+    {
+        self.into()
+    }
+}
+
+impl<'a, T> From<&'a OwnedInsertion<T>> for Insertion<'a, T> {
+    fn from(owned_insertion: &'a OwnedInsertion<T>) -> Self {
+        Insertion::new(owned_insertion.start, &owned_insertion.data)
+    }
+}
+
+/// Owned version of [`Insertion`].
+///
+/// This `struct` cannot be used in [`patch`] method.
+///
+/// [`Insertion`]: Insertion
+/// [`patch`]: Patch::patch
+pub struct OwnedInsertion<T> {
+    /// Position to insert into.
+    pub start: usize,
+    /// Data to be inserted.
+    pub data: Vec<T>,
+}
+
+impl<T> OwnedInsertion<T> {
+    /// Constructs a new [`OwnedInsertion`] from insertion position and data to
+    /// be inserted.
+    ///
+    /// [`OwnedInsertion`]: OwnedInsertion
+    pub fn new(start: usize, data: Vec<T>) -> Self {
+        OwnedInsertion { start, data }
+    }
+
+    /// Convinience method that constructs a borrowed version of `self`.
+    ///
+    /// [`Insertion`]: Insertion
+    /// [`patch`]: Patch::patch
+    pub fn borrow(&self) -> Insertion<T> {
+        self.into()
+    }
+}
+
+impl<T: Clone> From<&Insertion<'_, T>> for OwnedInsertion<T> {
+    fn from(insertion: &Insertion<T>) -> Self {
+        OwnedInsertion::new(insertion.start, insertion.data.to_vec())
+    }
 }
 
 /// Description of the difference between two slices. This is the return type of
@@ -92,6 +145,14 @@ impl<'a, T> Difference<'a, T> {
     pub fn from_insertions(insertions: Vec<Insertion<'a, T>>) -> Self {
         insertions.into()
     }
+
+    /// Convinience method that constructs an owned version of `self`.
+    pub fn to_owned(&self) -> OwnedDifference<T>
+    where
+        T: Clone,
+    {
+        self.into()
+    }
 }
 
 impl<T> From<Vec<Deletion>> for Difference<'_, T> {
@@ -103,6 +164,96 @@ impl<T> From<Vec<Deletion>> for Difference<'_, T> {
 impl<'a, T> From<Vec<Insertion<'a, T>>> for Difference<'a, T> {
     fn from(insertions: Vec<Insertion<'a, T>>) -> Self {
         Difference { deletions: Vec::new(), insertions }
+    }
+}
+
+impl<'a, T> From<&'a OwnedDifference<T>> for Difference<'a, T> {
+    fn from(owned_difference: &'a OwnedDifference<T>) -> Self {
+        Difference::new(
+            owned_difference.deletions.clone(),
+            owned_difference.insertions.iter().map(Into::into).collect(),
+        )
+    }
+}
+
+/// Owned version of [`Difference`].
+///
+/// This `struct` cannot be used in [`patch`] method.
+///
+/// [`Difference`]: Difference
+/// [`patch`]: Patch::patch
+pub struct OwnedDifference<T> {
+    /// All operations of deletions from a slice.
+    pub deletions: Vec<Deletion>,
+    /// All operations of insertion into a slice.
+    pub insertions: Vec<OwnedInsertion<T>>,
+}
+
+impl<T> OwnedDifference<T> {
+    /// Constructs a new [`OwnedDifference`] that represents no difference
+    /// between slices.
+    ///
+    /// [`OwnedDifference`]: OwnedDifference
+    pub fn empty() -> Self {
+        OwnedDifference::new(Vec::new(), Vec::new())
+    }
+
+    /// Constructs a new [`OwnedDifference`] from [`Vec`]s of [`Deletion`]s and
+    /// [`OwnedInsertion`]s.
+    ///
+    /// [`OwnedDifference`]: OwnedDifference
+    /// [`Vec`]: Vec
+    /// [`Deletion`]: Deletion
+    /// [`OwnedInsertion`]: OwnedInsertion
+    pub fn new(
+        deletions: Vec<Deletion>,
+        insertions: Vec<OwnedInsertion<T>>,
+    ) -> Self {
+        OwnedDifference { deletions, insertions }
+    }
+
+    /// Convinience method that constructs a new [`OwnedDifference`] from
+    /// [`Deletion`]s only.
+    /// 
+    /// [`OwnedDifference`]: OwnedDifference
+    /// [`Deletion`]: Deletion
+    pub fn from_deletions(deletions: Vec<Deletion>) -> Self {
+        deletions.into()
+    }
+
+    /// Convinience method that constructs a new [`OwnedDifference`] from
+    /// [`OwnedInsertion`]s only.
+    /// 
+    /// [`OwnedDifference`]: OwnedDifference
+    /// [`OwnedInsertion`]: OwnedInsertion
+    pub fn from_insertions(insertions: Vec<OwnedInsertion<T>>) -> Self {
+        insertions.into()
+    }
+
+    /// Convinience method that constructs a borrowed version of `self`.
+    pub fn borrow(&self) -> Difference<T> {
+        self.into()
+    }
+}
+
+impl<T> From<Vec<Deletion>> for OwnedDifference<T> {
+    fn from(deletions: Vec<Deletion>) -> Self {
+        OwnedDifference { deletions, insertions: Vec::new() }
+    }
+}
+
+impl<T> From<Vec<OwnedInsertion<T>>> for OwnedDifference<T> {
+    fn from(insertions: Vec<OwnedInsertion<T>>) -> Self {
+        OwnedDifference { deletions: Vec::new(), insertions }
+    }
+}
+
+impl<T: Clone> From<&Difference<'_, T>> for OwnedDifference<T> {
+    fn from(difference: &Difference<T>) -> Self {
+        OwnedDifference::new(
+            difference.deletions.clone(),
+            difference.insertions.iter().map(Into::into).collect(),
+        )
     }
 }
 

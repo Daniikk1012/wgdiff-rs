@@ -1,3 +1,5 @@
 # WGSOFT Diff Library
 
-For more information, please refer to the documentation.
+To get started, please refer to the [documentation].
+
+[documentation]: https://docs.rs/wgdiff

@@ -116,7 +116,7 @@ impl<'a, T> Difference<'a, T> {
     ///
     /// [`Difference`]: Difference
     pub fn empty() -> Self {
-        Difference { deletions: Vec::new(), insertions: Vec::new() }
+        Difference::new(Vec::new(), Vec::new())
     }
 
     /// Contructs a new [`Difference`] from [`Deletion`]s and [`Insertion`]s.

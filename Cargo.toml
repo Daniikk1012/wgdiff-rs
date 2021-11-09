@@ -6,3 +6,6 @@ repository = "https://github.com/Daniikk1012/wgdiff-rs"
 version = "0.2.0"
 edition = "2021"
 license = "MPL-2.0"
+
+[dev-dependencies]
+rand = { version = "0.8", features = ["small_rng"] }

@@ -18,7 +18,7 @@
 //! [`Patch`]: Patch
 //! [`Patched`]: Patched
 
-use std::ops::Range;
+use std::{cmp, ops::Range};
 
 /// An operation of deletion of a range of elements from a slice.
 pub type Deletion = Range<usize>;
@@ -270,30 +270,44 @@ pub trait Lcs {
 
 impl<T: Eq> Lcs for [T] {
     fn lcs(&self, other: &Self) -> (Vec<usize>, Vec<usize>) {
-        if let (Some(self_last), Some(other_last))
-            = (self.last(), other.last())
-        {
-            if self_last == other_last {
-                let (mut self_lcs, mut other_lcs) =
-                    self[..self.len() - 1].lcs(&other[..other.len() - 1]);
+        let mut lengths = vec![vec![0; other.len() + 1]; self.len() + 1];
 
-                self_lcs.push(self.len() - 1);
-                other_lcs.push(other.len() - 1);
-
-                (self_lcs, other_lcs)
-            } else {
-                let self_result = self.lcs(&other[..other.len() - 1]);
-                let other_result = self[..self.len() - 1].lcs(other);
-
-                if self_result.0.len() > other_result.0.len() {
-                    self_result
-                } else {
-                    other_result
-                }
+        for (index_self, value_self) in self.iter().enumerate().rev() {
+            for (index_other, value_other) in other.iter().enumerate().rev() {
+                lengths[index_self][index_other] =
+                    if value_self == value_other {
+                        lengths[index_self + 1][index_other + 1] + 1
+                    } else {
+                        cmp::max(
+                            lengths[index_self + 1][index_other],
+                            lengths[index_self][index_other + 1],
+                        )
+                    };
             }
-        } else {
-            (Vec::new(), Vec::new())
         }
+
+        let mut result_self = Vec::new();
+        let mut result_other = Vec::new();
+        let mut index_self = 0;
+        let mut index_other = 0;
+
+        while lengths[index_self][index_other] > 0 {
+            if self[index_self] == other[index_other] {
+                result_self.push(index_self);
+                result_other.push(index_other);
+
+                index_self += 1;
+                index_other += 1;
+            } else if lengths[index_self + 1][index_other]
+                > lengths[index_self][index_other + 1]
+            {
+                index_self += 1;
+            } else {
+                index_other += 1;
+            }
+        }
+
+        (result_self, result_other)
     }
 }
 

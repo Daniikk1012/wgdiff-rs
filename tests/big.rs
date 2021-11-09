@@ -14,16 +14,19 @@ fn bytes(length: usize) {
 }
 
 #[test]
+#[ignore]
 fn bytes_1_000() {
     bytes(1_000);
 }
 
 #[test]
+#[ignore]
 fn bytes_5_000() {
     bytes(5_000);
 }
 
 #[test]
+#[ignore]
 fn bytes_10_000() {
     bytes(10_000);
 }

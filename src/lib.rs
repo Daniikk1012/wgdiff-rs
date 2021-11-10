@@ -264,6 +264,10 @@ impl<T: Clone> From<&Difference<'_, T>> for OwnedDifference<T> {
     }
 }
 
+impl<T> Sealed for [T] {}
+
+impl<T> Sealed for Vec<T> {}
+
 /// Trait that contains a method for computing Largest Common Subsequence of two
 /// slices.
 pub trait Lcs: Sealed {
@@ -425,10 +429,6 @@ impl<T: Eq + Clone> Patched<T> for Vec<T> {
 
 mod private {
     pub trait Sealed {}
-
-    impl<T> Sealed for [T] {}
-    
-    impl<T> Sealed for Vec<T> {}
 }
 
 #[cfg(test)]

@@ -3,7 +3,7 @@ name = "wgdiff"
 description = "Implementation of LCS-based diff algorithm"
 readme = "README.md"
 repository = "https://github.com/Daniikk1012/wgdiff-rs"
-version = "0.4.1"
+version = "0.4.2"
 edition = "2021"
 license = "MPL-2.0"
 

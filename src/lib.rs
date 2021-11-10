@@ -19,6 +19,7 @@
 //! [`Diff`]: Diff
 //! [`Patch`]: Patch
 //! [`Patched`]: Patched
+//! [`Vec`]: Vec
 
 use std::{cmp, ops::Range};
 

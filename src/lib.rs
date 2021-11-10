@@ -13,12 +13,16 @@
 //! * [`Patch`]
 //! * [`Patched`]
 //!
+//! These traits are sealed and are implemented only for slices and [`Vec`]s.
+//!
 //! [`Lcs`]: Lcs
 //! [`Diff`]: Diff
 //! [`Patch`]: Patch
 //! [`Patched`]: Patched
 
 use std::{cmp, ops::Range};
+
+use self::private::Sealed;
 
 /// An operation of deletion of a range of elements from a slice.
 pub type Deletion = Range<usize>;
@@ -259,7 +263,7 @@ impl<T: Clone> From<&Difference<'_, T>> for OwnedDifference<T> {
 
 /// Trait that contains a method for computing Largest Common Subsequence of two
 /// slices.
-pub trait Lcs {
+pub trait Lcs: Sealed {
     /// Calculates the LCS of two slices.
     ///
     /// The [`Vec`]s that this method returns contain indices of elements in
@@ -414,6 +418,14 @@ impl<T: Eq + Clone> Patched<T> for Vec<T> {
     fn patched(&self, diff: Difference<T>) -> Vec<T> {
         (&self[..]).patched(diff)
     }
+}
+
+mod private {
+    pub trait Sealed {}
+
+    impl<T> Sealed for [T] {}
+    
+    impl<T> Sealed for Vec<T> {}
 }
 
 #[cfg(test)]

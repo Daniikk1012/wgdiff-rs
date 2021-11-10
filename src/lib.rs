@@ -136,7 +136,8 @@ impl<'a, T> Difference<'a, T> {
         Difference { deletions, insertions }
     }
 
-    /// Convenience that constructs [`Difference`] from [`Deletion`]s only.
+    /// Convenience method that constructs [`Difference`] from [`Deletion`]s
+    /// only.
     ///
     /// [`Difference`]: Difference
     /// [`Deletion`]: Deletion
@@ -144,7 +145,8 @@ impl<'a, T> Difference<'a, T> {
         deletions.into()
     }
 
-    /// Convenience that constructs [`Difference`] from [`Insertion`]s only.
+    /// Convenience method that constructs [`Difference`] from [`Insertion`]s
+    /// only.
     ///
     /// [`Difference`]: Difference
     /// [`Insertion`]: Insertion

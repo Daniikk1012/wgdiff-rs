@@ -221,7 +221,7 @@ impl<T> OwnedDifference<T> {
 
     /// Convenience method that constructs a new [`OwnedDifference`] from
     /// [`Deletion`]s only.
-    /// 
+    ///
     /// [`OwnedDifference`]: OwnedDifference
     /// [`Deletion`]: Deletion
     pub fn from_deletions(deletions: Vec<Deletion>) -> Self {
@@ -230,7 +230,7 @@ impl<T> OwnedDifference<T> {
 
     /// Convenience method that constructs a new [`OwnedDifference`] from
     /// [`OwnedInsertion`]s only.
-    /// 
+    ///
     /// [`OwnedDifference`]: OwnedDifference
     /// [`OwnedInsertion`]: OwnedInsertion
     pub fn from_insertions(insertions: Vec<OwnedInsertion<T>>) -> Self {
@@ -285,15 +285,15 @@ impl<T: Eq> Lcs for [T] {
 
         for (index_self, value_self) in self.iter().enumerate().rev() {
             for (index_other, value_other) in other.iter().enumerate().rev() {
-                lengths[index_self][index_other] =
-                    if value_self == value_other {
-                        lengths[index_self + 1][index_other + 1] + 1
-                    } else {
-                        cmp::max(
-                            lengths[index_self + 1][index_other],
-                            lengths[index_self][index_other + 1],
-                        )
-                    };
+                lengths[index_self][index_other] = if value_self == value_other
+                {
+                    lengths[index_self + 1][index_other + 1] + 1
+                } else {
+                    cmp::max(
+                        lengths[index_self + 1][index_other],
+                        lengths[index_self][index_other + 1],
+                    )
+                };
             }
         }
 
@@ -345,28 +345,27 @@ impl<T: Eq> Diff<T> for [T] {
 
         let mut result = Difference::empty();
 
-        for index in (0..old.len()).filter(|index| {
-            lcs_old.binary_search(index).is_err()
-        }) {
+        for index in
+            (0..old.len()).filter(|index| lcs_old.binary_search(index).is_err())
+        {
             match result.deletions.last_mut() {
                 Some(Deletion { end, .. }) if index == *end => *end += 1,
                 _ => result.deletions.push(index..index + 1),
             }
         }
 
-        for index in (0..self.len()).filter(|index| {
-            lcs_self.binary_search(index).is_err()
-        }) {
+        for index in (0..self.len())
+            .filter(|index| lcs_self.binary_search(index).is_err())
+        {
             match result.insertions.last_mut() {
-                Some(Insertion {
-                    start,
-                    data,
-                }) if index == *start + data.len() => {
+                Some(Insertion { start, data })
+                    if index == *start + data.len() =>
+                {
                     *data = &self[*start..=index];
-                },
-                _ => result.insertions.push(
-                    Insertion::new(index, &self[index..=index])
-                ),
+                }
+                _ => result
+                    .insertions
+                    .push(Insertion::new(index, &self[index..=index])),
             }
         }
 
@@ -472,26 +471,29 @@ mod tests {
 
     #[test]
     fn diff_1() {
-        assert_eq!(b"ATANA".diff(b"BANANA"), Difference::new(
-            vec![0..1, 2..3],
-            vec![Insertion::new(1, b"T")],
-        ));
+        assert_eq!(
+            b"ATANA".diff(b"BANANA"),
+            Difference::new(vec![0..1, 2..3], vec![Insertion::new(1, b"T")],)
+        );
     }
 
     #[test]
     fn diff_2() {
-        assert_eq!(b"2345".diff(b"012389"), Difference::new(
-            vec![0..2, 4..6],
-            vec![Insertion::new(2, b"45")],
-        ));
+        assert_eq!(
+            b"2345".diff(b"012389"),
+            Difference::new(vec![0..2, 4..6], vec![Insertion::new(2, b"45")],)
+        );
     }
 
     #[test]
     fn diff_3() {
-        assert_eq!(b"72345".diff(b"012389"), Difference::new(
-            vec![0..2, 4..6],
-            vec![Insertion::new(0, b"7"), Insertion::new(3, b"45")],
-        ));
+        assert_eq!(
+            b"72345".diff(b"012389"),
+            Difference::new(
+                vec![0..2, 4..6],
+                vec![Insertion::new(0, b"7"), Insertion::new(3, b"45")],
+            )
+        );
     }
 
     #[test]

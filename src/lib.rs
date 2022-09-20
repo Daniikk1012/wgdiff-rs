@@ -29,7 +29,7 @@ use self::private::Sealed;
 pub type Deletion = Range<usize>;
 
 /// An operation of insertion a slice of elements into a slice.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Insertion<'a, T> {
     /// Position to insert into.
     pub start: usize,
@@ -69,6 +69,7 @@ impl<'a, T> From<&'a OwnedInsertion<T>> for Insertion<'a, T> {
 ///
 /// [`Insertion`]: Insertion
 /// [`patch`]: Patch::patch
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OwnedInsertion<T> {
     /// Position to insert into.
     pub start: usize,
@@ -107,7 +108,7 @@ impl<T: Clone> From<&Insertion<'_, T>> for OwnedInsertion<T> {
 ///
 /// [`diff`]: Diff::diff
 /// [`patch`]: Patch::patch
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Difference<'a, T> {
     /// All operations of deletions from a slice.
     pub deletions: Vec<Deletion>,
@@ -190,6 +191,7 @@ impl<'a, T> From<&'a OwnedDifference<T>> for Difference<'a, T> {
 ///
 /// [`Difference`]: Difference
 /// [`patch`]: Patch::patch
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OwnedDifference<T> {
     /// All operations of deletions from a slice.
     pub deletions: Vec<Deletion>,

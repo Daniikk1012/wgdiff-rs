@@ -437,58 +437,38 @@ mod tests {
     use super::{Diff, Difference, Insertion, Lcs, Patched};
 
     #[test]
-    fn lcs_1() {
+    fn lcs() {
         let (left_lcs, right_lcs) = b"BANANA".lcs(b"ATANA");
         assert_eq!(left_lcs, [1, 3, 4, 5]);
         assert_eq!(right_lcs, [0, 2, 3, 4]);
-    }
 
-    #[test]
-    fn lcs_2() {
         let (left_lcs, right_lcs) = b"abc".lcs(b"ABC");
         assert_eq!(left_lcs, []);
         assert_eq!(right_lcs, []);
-    }
 
-    #[test]
-    fn lcs_3() {
         let (left_lcs, right_lcs) = b"ABC".lcs(b"ABC");
         assert_eq!(left_lcs, [0, 1, 2]);
         assert_eq!(right_lcs, [0, 1, 2]);
-    }
 
-    #[test]
-    fn lcs_4() {
         let (left_lcs, right_lcs) = b"ABC".lcs(b"");
         assert_eq!(left_lcs, []);
         assert_eq!(right_lcs, []);
-    }
 
-    #[test]
-    fn lcs_5() {
         let (left_lcs, right_lcs) = b"".lcs(b"");
         assert_eq!(left_lcs, []);
         assert_eq!(right_lcs, []);
     }
 
     #[test]
-    fn diff_1() {
+    fn diff() {
         assert_eq!(
             b"ATANA".diff(b"BANANA"),
             Difference::new(vec![0..1, 2..3], vec![Insertion::new(1, b"T")],)
         );
-    }
-
-    #[test]
-    fn diff_2() {
         assert_eq!(
             b"2345".diff(b"012389"),
             Difference::new(vec![0..2, 4..6], vec![Insertion::new(2, b"45")],)
         );
-    }
-
-    #[test]
-    fn diff_3() {
         assert_eq!(
             b"72345".diff(b"012389"),
             Difference::new(
@@ -499,21 +479,15 @@ mod tests {
     }
 
     #[test]
-    fn patch_1() {
+    fn patch() {
         let old = b"BANANA";
         let new = b"ATANA";
         assert_eq!(old.patched(new.diff(old)), new);
-    }
 
-    #[test]
-    fn patch_2() {
         let old = b"012389";
         let new = b"2345";
         assert_eq!(old.patched(new.diff(old)), new);
-    }
 
-    #[test]
-    fn patch_3() {
         let old = b"012389";
         let new = b"72345";
         assert_eq!(old.patched(new.diff(old)), new);
